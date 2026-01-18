@@ -1,0 +1,40 @@
+{
+  "name": "MHS-AI-IDE",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "workspaceFolder": "/workspace",
+  "containerUser": "node",
+  "remoteUser": "node",
+  "runArgs": [
+    "--userns=keep-id",
+    "--security-opt=label=disable", // Disables SELinux isolation for the workspace
+    "--name=mhs_ide_container"
+  ],
+  "mounts": [
+    {
+      "source": "/home/home/mhs/mhs_workspace",
+      "target": "/workspace",
+      "type": "bind",
+      "options": ["Z"] // Recursive SELinux relabeling for Podman
+    },
+    {
+      "source": "mcp-memory-data",
+      "target": "/home/node/.mcp-memory",
+      "type": "volume"
+    }
+  ],
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      },
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
+      ]
+    }
+  }
+}
+

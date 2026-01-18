@@ -1,0 +1,35 @@
+version: '3.8'
+
+# This extension is the fix for the --userns conflict
+x-podman:
+  in_pod: false
+
+services:
+  ide:
+    build:
+      context: .
+      dockerfile: Containerfile
+    container_name: mhs_ide
+    # Required for rootless file editing in /workspace
+    userns_mode: "keep-id"
+    shm_size: '2gb'
+    environment:
+      - CHROME_BIN=/usr/bin/chromium
+      - MCP_MEMORY_CHROMA_PATH=/home/node/.mcp-memory/chroma_db
+      - MCP_MEMORY_USE_ONNX=1
+    volumes:
+      - /home/home/mhs/mhs_workspace:/workspace:Z
+      - mcp-memory-data:/home/node/.mcp-memory:Z
+      - node_modules_cache:/workspace/node_modules:Z
+    working_dir: /workspace
+    tty: true
+    stdin_open: true
+    ports:
+      - "5173:5173"
+      - "8000:8000"
+      - "5071-5074:5071-5074"
+
+volumes:
+  mcp-memory-data:
+  node_modules_cache:
+
